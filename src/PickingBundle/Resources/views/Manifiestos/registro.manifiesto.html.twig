@@ -1,0 +1,113 @@
+{% extends 'app/base.html.twig' %}
+
+{% block page_content %}
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3>Registro de manifiesto extendido</h3>
+      </div>
+      <div class="panel-body">
+        <div class="col-lg-6 col-md-6 col-sm-12">
+          <label for="txtguia">No. Guía</label>
+          <input type="text" id="txtguia" autofocus class="form-control" maxlength="100">
+        </div>
+        <div class="clearfix"></div>
+        <h5>Órdenes de venta</h5>
+        <div id="inputFormRow">
+          <div class="col-lg-3 col-md-3 col-sm-12">
+            <div class="input-group">
+              <input type="text" id="orden1" name="ordenes[]" maxlength="7" placeholder="Orden de Venta" class="form-control" onchange="agregarCampos();">
+              <span class="input-group-btn">
+              <button id="removeRow" type="button" class="btn btn-danger">Eliminar</button>
+            </span>
+            </div>
+          </div>
+        </div>
+        <div class="clearfix"></div>
+        <div id="newRow"></div>
+        <br/>
+        <br/>
+        <br/>
+        <button id="save" type="button" class="btn btn-success">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+{%  endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+
+  {% for message in app.session.flashBag().get("status") %}
+    <script>
+      {% for info in app.session.flashBag().get("info") %}
+        let info = "{{ info }}"
+        switch (info) {
+          case "success":
+            toastr.success("{{ message }}", "¡Éxito!");
+            break;
+          case "error":
+            toastr.error("{{ message }}", "¡Error!");
+            break;
+          case "info":
+            toastr.success("{{ message }}", "¡Info!");
+            break;
+          default:
+            break;
+        }
+      {% endfor %}
+    </script>
+  {% endfor %}
+
+  <script>
+
+    function agregarCampos() {
+      let nueva = confirm('¿Desea agregar una nueva orden de venta?');
+
+      if(nueva){
+        let html = '';
+        html += '<div id="inputFormRow">';
+        html += '<div class="col-lg-3 col-md-3 col-sm-12">';
+        html += '<div class="input-group">';
+        html += '<input type="text" name="ordenes[]" maxlength="7" onblur="this.nextSibling.focus();" placeholder="Orden de Venta" class="form-control" onchange="agregarCampos();">';
+        html += '<span class="input-group-btn">';
+        html += '<button id="removeRow" type="button" class="btn btn-danger">Eliminar</button>';
+        html += '</span>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="clearfix"></div>';
+
+        $('#newRow').append(html);
+      }
+    }
+
+    $(document).on('click', '#removeRow', function () {
+      $(this).closest('#inputFormRow').remove();
+    });
+
+    $("#txtguia").change(function () {
+      $("#orden1").focus();
+    });
+  </script>
+
+  <!-- Datatables -->
+  <script src="{{ asset('assets/vendors/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-buttons/js/buttons.flash.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-scroller/js/dataTables.scroller.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/jszip/dist/jszip.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/pdfmake/build/pdfmake.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/pdfmake/build/vfs_fonts.js') }}"></script>
+
+  <!-- Custom  theme script -->
+  <script src="{{ asset('assets/js/custom.js') }}" ></script>
+{% endblock %}

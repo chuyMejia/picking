@@ -1,0 +1,9 @@
+reportes_picking:
+    path: /reportes/pickings
+    defaults: { _controller: PickingBundle:Reportes:reportePicking }
+    methods: [GET]
+
+reportes_getdata_pickings:
+    path: /reportes/get_data
+    defaults: { _controller: PickingBundle:Reportes:getDataFromPicking }
+    methods: [GET]

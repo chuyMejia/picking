@@ -1,0 +1,238 @@
+{% extends 'app/base.html.twig' %}
+
+{% block page_content %}
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+      <div class="x_title">
+        <h2>Dashboard Ventas<small></small></h2>
+        <div style="text-align: right; color: #0f0f0f; font-size: large;" id = "clock" onload="currentTime()"></div>
+        <div class="clearfix"></div>
+      </div>
+      <div class="x_content">
+        <div class="busquedaSem">
+          <label class="control-label">
+            Filtros:</label>
+          <div class="custom-control custom-radio custom-control-inline">
+            <input type="checkbox" id="chktodos" class="fill custom-control-input form-control-sm fs" value="">
+            <label class="custom-control-label" for="chktodos">Todos</label>
+            <input type="checkbox" id="customRadioInline1" name="filtros[]" class="fill custom-control-input form-control-sm fs" value="Activado">
+            <label class="custom-control-label" for="customRadioInline1">Activado</label>
+            <input type="checkbox" id="customRadioInline2" name="filtros[]" class="fill custom-control-input form-control-sm fs" value="En Proceso">
+            <label class="custom-control-label" for="customRadioInline2">En Proceso</label>
+            <input type="checkbox" id="customRadioInline3" name="filtros[]" class="fill custom-control-input form-control-sm fs" value="Completado">
+            <label class="custom-control-label" for="customRadioInline3">Completado</label>
+            <input type="checkbox" id="customRadioInline4" name="filtros[]" class="fill custom-control-input form-control-sm fs" value="Facturado">
+            <label class="custom-control-label" for="customRadioInline3">Facturado</label>
+            <input type="checkbox" id="customRadioInline5" name="filtros[]" class="fill custom-control-input form-control-sm fs" value="Cancelado">
+            <label class="custom-control-label" for="customRadioInline3">Cancelado</label>
+            <input type="checkbox" id="customRadioInline6" name="filtros2[]" class="fill custom-control-input form-control-sm fs" value="En horario">
+            <label class="custom-control-label" for="customRadioInline3">En horario</label>
+            <input type="checkbox" id="customRadioInline7" name="filtros2[]" class="fill custom-control-input form-control-sm fs" value="Fuera de horario">
+            <label class="custom-control-label" for="customRadioInline3">Fuera de horario</label>
+          </div>
+        </div>
+        <table id="datatable-picking" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+          <thead>
+          <tr>
+            <th>Orden de Venta</th>
+            <th>Picking</th>
+            <th>Agente</th>
+            <th>Factura</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Estatus</th>
+          </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+
+
+      </div>
+    </div>
+  </div>
+
+{%  endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+
+  <script>
+    $(document).ready(function () {
+      currentTime();
+      llenarTabla();
+    });
+
+    function currentTime() {
+      let date = new Date();
+      let hh = date.getHours();
+      let mm = date.getMinutes();
+      let ss = date.getSeconds();
+      let session = "AM";
+
+      if(hh === 0){
+        hh = 12;
+      }
+      if(hh > 12){
+        hh = hh - 12;
+        session = "PM";
+      }
+
+      hh = (hh < 10) ? "0" + hh : hh;
+      mm = (mm < 10) ? "0" + mm : mm;
+      ss = (ss < 10) ? "0" + ss : ss;
+
+      let time = hh + ":" + mm + ":" + ss + " " + session;
+
+      document.getElementById("clock").innerText = time;
+      let t = setTimeout(function(){ currentTime() }, 1000);
+    }
+
+
+
+    function llenarTabla() {
+      $("#datatable-picking").DataTable({
+        "language": {
+          "emptyTable": "No hay información",
+          "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+          "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+          "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+          "infoPostFix": "",
+          "thousands": ",",
+          "lengthMenu": "Mostrar _MENU_ Entradas",
+          "loadingRecords": "Cargando...",
+          "processing": "Procesando...",
+          "search": "Buscar:",
+          "zeroRecords": "Sin resultados encontrados",
+          "paginate": {
+            "first": "Primero",
+            "last": "Ultimo",
+            "next": "Siguiente",
+            "previous": "Anterior"
+          }
+        },
+        "ajax": '{{ path('dashboard_ventas_get_data') }}',
+        "columns": [
+          { 'data': 'ordVenta' },
+          { 'data': 'picking' },
+          { 'data': 'agente' },
+          { 'data': 'factura' },
+          { 'data': 'fecha' },
+          { 'data': 'hora' },
+          { 'data': 'descStatus' },
+          { 'data': 'horario' },
+        ],
+        "order": [[5,'asc']],
+        "lengthMenu": [5, 10, 20, 50, 100, 200, 500],
+        "aoColumnDefs": [
+          {
+            "aTargets": [6],
+            "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+              let backColor = '';
+              let fontColor = '';
+              switch (sData) {
+                case 'Activado':
+                  backColor = 'red';
+                  fontColor = 'white';
+                  break;
+                case 'En Proceso':
+                  backColor = 'blue';
+                  fontColor = 'white';
+                  break;
+                case 'Completado':
+                  backColor = 'yellow';
+                  fontColor = 'black';
+                  break;
+                case 'Facturado':
+                  backColor = 'green';
+                  fontColor = 'white';
+                  break;
+                case 'Cancelado':
+                  backColor = 'black';
+                  fontColor = 'white';
+                  break;
+              }
+
+              $(nTd).css('background',backColor);
+              $(nTd).css('color', fontColor);
+            },
+
+          },
+          {
+            "aTargets": [7],
+            "visible": false
+          }
+        ],
+        "dom": 'Blfrtip',
+        "buttons": [{
+          "extend": 'excelHtml5',
+          customize: function(xlsx) {
+            var sheet = xlsx.xl.worksheets['pickings.xml'];
+
+            $('row c[r^="C"]', sheet).each( function () {
+              if ( $('is t', this).text() == 'New York' ) {
+                $(this).attr( 's', '20' );
+              }
+            });
+          }
+        }],
+      });
+    }
+
+    setInterval(function () {
+      $("#datatable-picking").DataTable().ajax.reload(null, false);
+
+    }, 360000);
+
+
+
+
+    $("#chktodos").change(function () {
+      location.reload();
+    });
+
+    $('[name="filtros[]"]').click(function () {
+        let arr = $('[name="filtros[]"]:checked').map(function (){
+          return this.value;
+        }).get();
+
+        let str = arr.join(',');
+        let seleccionados = '"' + str.replace(/,/g, '|') + '"';
+        console.log(seleccionados);
+        $("#datatable-picking").DataTable().column(6).search(seleccionados, true).draw();
+    });
+
+    $('[name="filtros2[]"]').click(function () {
+      let arr = $('[name="filtros2[]"]:checked').map(function (){
+        return this.value;
+      }).get();
+
+      let str = arr.join(',');
+      let seleccionados2 = '"' + str.replace(/,/g, '|') + '"';
+      console.log(seleccionados2);
+      $("#datatable-picking").DataTable().column(7).search(seleccionados2, true).draw();
+    });
+
+
+
+  </script>
+
+  <!-- Datatables -->
+  <script src="{{ asset('assets/vendors/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-buttons/js/buttons.flash.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-scroller/js/dataTables.scroller.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/jszip/dist/jszip.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/pdfmake/build/pdfmake.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/pdfmake/build/vfs_fonts.js') }}"></script>
+
+  <!-- Custom  theme script -->
+  <script src="{{ asset('assets/js/custom.js') }}" ></script>
+{% endblock %}

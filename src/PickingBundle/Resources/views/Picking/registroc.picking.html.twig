@@ -1,0 +1,154 @@
+{% extends 'app/base.html.twig' %}
+
+{% block page_content %}
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3>Registro de Picking</h3>
+      </div>
+      <div class="panel-body">
+        <label for="txtpicking">No. Picking</label>
+        <input type="text" id="txtpicking" class="form-control" autofocus maxlength="10">
+        <label for="txtnumcolaborador">No. Colaborador</label>
+        <input type="text" id="txtnumcolaborador" class="form-control"  maxlength="4"  oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
+      </div>
+    </div>
+  </div>
+
+{%  endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+
+  {% for message in app.session.flashBag().get("status") %}
+    <script>
+      {% for info in app.session.flashBag().get("info") %}
+        let info = "{{ info }}"
+        switch (info) {
+          case "success":
+            toastr.success("{{ message }}", "¡Éxito!");
+            break;
+          case "error":
+            toastr.error("{{ message }}", "¡Error!");
+            break;
+          case "info":
+            toastr.success("{{ message }}", "¡Info!");
+            break;
+          default:
+            break;
+        }
+      {% endfor %}
+    </script>
+  {% endfor %}
+
+  <script>
+
+    let empleadoValido = false;
+    let picking = "";
+    let codigo = "";
+
+    $("#txtpicking").change(function () {
+      picking = $(this).val().toUpperCase();
+      $(this).val(picking);
+      let nomenclatura = "RPI";
+
+      if(picking !== "" && picking.length === 10){
+        if(nomenclatura === picking.substr(0,3)){
+          let datos = {};
+          datos.picking = picking;
+          $.ajax({
+            type: 'GET',
+            url: '{{ path('picking_valida_existencia') }}',
+            data: datos,
+            success: function () {
+              $("#txtnumcolaborador").focus();
+            },
+            error: function(){
+              toastr.error("Registro duplicado", "¡Error!");
+              $("#txtpicking").val("");
+              let audio = new Audio("{{asset('assets/images/alarma.mp3')}}");
+              audio.play();
+              let count = 5;
+              let timer = setInterval(function(){
+                count--;
+                if(count === 0){
+                  audio.pause();
+                }
+              }, 1000);
+            }
+          });
+        }else{
+          toastr.error("La cadena ingresada no coincide con el formato de registro de los Pickings");
+          $("#txtpicking").val("");
+        }
+      }else{
+        toastr.error("Debe ingresar un número de Picking con 10 caracteres ");
+      }
+    });
+
+
+    $("#txtnumcolaborador").change(function () {
+       codigo = $(this).val();
+
+      if(codigo !== "" && picking !== ""){
+        let datos = {};
+        datos.codigo = codigo;
+        $.ajax({
+          type: 'GET',
+          url: '{{ path('empleados_validar_codigo') }}',
+          data: datos,
+          success: function () {
+            registrarPicking(picking, codigo)
+          },
+          error: function (respuesta) {
+            toastr.error(respuesta.responseText, "¡Error!");
+          }
+        });
+      }else{
+        toastr.error("Debe ingresar el número de empleado y el número de Picking", "¡Error!");
+      }
+    });
+
+
+    function registrarPicking(numPicking, codigo){
+      let datos = {};
+      datos.numpicking = numPicking;
+      datos.codigo = codigo;
+      $.ajax({
+        type: 'POST',
+        url: '{{ path('picking_registro') }}',
+        data: datos,
+        success: function (respuesta) {
+          toastr.success(respuesta, "¡Éxito!");
+          $("#txtpicking").val("");
+          $("#txtnumcolaborador").val("");
+          $("#txtpicking").focus();
+        },
+        error: function (respuesta) {
+          toastr.error(respuesta, "¡Error");
+        }
+      })
+    }
+
+  </script>
+
+  <!-- Datatables -->
+  <script src="{{ asset('assets/vendors/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-buttons/js/buttons.flash.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-scroller/js/dataTables.scroller.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/jszip/dist/jszip.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/pdfmake/build/pdfmake.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/pdfmake/build/vfs_fonts.js') }}"></script>
+
+  <!-- Custom  theme script -->
+  <script src="{{ asset('assets/js/custom.js') }}" ></script>
+{% endblock %}

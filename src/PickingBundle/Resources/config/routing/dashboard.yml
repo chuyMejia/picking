@@ -1,0 +1,26 @@
+dashboard_index:
+    path: /dashboard
+    defaults: { _controller: PickingBundle:DashboardPicking:index }
+    methods: [GET]
+
+dashboard_get_data:
+    path: /dashboard/get_data
+    defaults: { _controller: PickingBundle:DashboardPicking:loadData }
+    methods: [GET]
+    condition: "request.isXmlHttpRequest()"
+
+dashboard_ventas_index:
+    path: /dashboard/ventas
+    defaults: { _controller: PickingBundle:DashboardPicking:indexVentas }
+    methods: [GET]
+
+dashboard_ventas_get_data:
+    path: /dashboard/ventas/get_data
+    defaults: { _controller: PickingBundle:DashboardPicking:loadDataVentas }
+    methods: [GET]
+    condition: "request.isXmlHttpRequest()"
+
+dashboard_mty_index:
+    path: /dashboard/mty
+    defaults: { _controller: PickingBundle:DashboardPicking:indexMty }
+    methods: [GET]

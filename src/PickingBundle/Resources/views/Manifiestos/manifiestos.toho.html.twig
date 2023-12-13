@@ -1,0 +1,142 @@
+{% extends 'app/base.html.twig' %}
+
+{% block stylesheets %}
+
+  {{ parent() }}
+
+  <style>
+    button {
+      display: inline-block;
+      height: 134px;
+      padding: 0;
+      margin: 0;
+      vertical-align: top;
+      width: 104px;
+    }
+
+    #close-image img {
+      display: block;
+      height: 130px;
+      width: 100px;
+    }
+
+    #btn-dhl {
+      background-image: url( 'https://1000marcas.net/wp-content/uploads/2020/01/DHL-Logo.png' );
+      background-size: 100px 130px;
+      height: 134px;
+      width: 104px;
+    }
+
+    #btn-pqe {
+      background-image: url( 'https://globalpaq.com/img/logos-sc-paquetexpress.png' );
+      background-size: 100px 130px;
+      height: 134px;
+      width: 104px;
+    }
+
+    #btn-est {
+      background-image: url( 'https://irp.cdn-website.com/f1d4cc40/MOBILE/png/641.png' );
+      background-size: 100px 130px;
+      height: 134px;
+      width: 104px;
+    }
+
+    #btn-ups {
+      background-image: url( 'https://w7.pngwing.com/pngs/1001/978/png-transparent-logo-ups-logos-and-brands-icon.png' );
+      background-size: 100px 130px;
+      height: 134px;
+      width: 104px;
+    }
+  </style>
+{% endblock %}
+
+{% block page_content %}
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3>Imprimir manifiestos de paqueterías TOHO</h3>
+      </div>
+      <div class="panel-body">
+        <button id="btn-dhl" tar> </button>
+        <button id="btn-pqe"> </button>
+        <!--<button id="btn-est"> </button>-->
+        <button id="btn-ups"> </button>
+      </div>
+    </div>
+  </div>
+
+{%  endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+
+  {% for message in app.session.flashBag().get("status") %}
+    <script>
+      {% for info in app.session.flashBag().get("info") %}
+        let info = "{{ info }}"
+        switch (info) {
+          case "success":
+            toastr.success("{{ message }}", "¡Éxito!");
+            break;
+          case "error":
+            toastr.error("{{ message }}", "¡Error!");
+            break;
+          case "info":
+            toastr.success("{{ message }}", "¡Info!");
+            break;
+          default:
+            break;
+        }
+      {% endfor %}
+    </script>
+  {% endfor %}
+
+  <script>
+    $("#btn-dhl").click(function () {
+      let param = "1";
+      openNewTab(param);
+    });
+
+    $("#btn-pqe").click(function () {
+      let param = "2";
+      openNewTab(param);
+    });
+
+    $("#btn-est").click(function () {
+      let param = "3";
+      openNewTab(param);
+    });
+
+    $("#btn-ups").click(function () {
+      let param = "4";
+      openNewTab(param);
+    });
+
+    function openNewTab(parameter){
+      let URL = "{{ app.request.getSchemeAndHttpHost() }}/picking/web/";
+      window.open(URL+'manifiestos/toho/pdf/'+parameter, '_blank');
+    }
+
+
+  </script>
+
+  <!-- Datatables -->
+  <script src="{{ asset('assets/vendors/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-buttons/js/buttons.flash.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js') }}"></script>
+  <script src="{{ asset('assets/vendors/datatables.net-scroller/js/dataTables.scroller.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/jszip/dist/jszip.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/pdfmake/build/pdfmake.min.js') }}"></script>
+  <script src="{{ asset('assets/vendors/pdfmake/build/vfs_fonts.js') }}"></script>
+
+  <!-- Custom  theme script -->
+  <script src="{{ asset('assets/js/custom.js') }}" ></script>
+{% endblock %}

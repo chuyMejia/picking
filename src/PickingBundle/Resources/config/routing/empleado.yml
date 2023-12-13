@@ -1,0 +1,5 @@
+empleados_validar_codigo:
+    path: /empleados/valida
+    defaults: { _controller: PickingBundle:Empleados:validarCodEmp }
+    methods: [GET]
+    condition: "request.isXmlHttpRequest()"

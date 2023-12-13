@@ -1,0 +1,19 @@
+travers_picking_dashboard:
+    resource: "@PickingBundle/Resources/config/routing/dashboard.yml"
+    prefix: /
+
+travers_picking_gestion:
+    resource: "@PickingBundle/Resources/config/routing/picking.yml"
+    prefix: /
+
+travers_picking_empleados:
+    resource: "@PickingBundle/Resources/config/routing/empleado.yml"
+    prefix: /
+
+travers_picking_reportes:
+    resource: "@PickingBundle/Resources/config/routing/reportes.yml"
+    prefix: /
+
+travers_picking_manifiestos:
+    resource: "@PickingBundle/Resources/config/routing/manifiestos.yml"
+    prefix: /

@@ -1,0 +1,24 @@
+manifiestos_imprimir:
+    path: /manifiestos/imprimir/
+    defaults: { _controller: PickingBundle:Manifiestos:index }
+    methods: [GET, POST]
+
+manifiestos_pdf:
+    path: /manifiestos/genera_pdf/{param}
+    defaults: { _controller: PickingBundle:Manifiestos:generarPDF }
+    methods: [GET]
+
+manifiestos_toho_imprimir:
+    path: /manifiestos/toho/imprimir
+    defaults: { _controller: PickingBundle:Manifiestos:indexToho }
+    methods: [GET, POST]
+
+manifiestos_toho_pdf:
+    path: /manifiestos/toho/pdf/{param}
+    defaults: { _controller: PickingBundle:Manifiestos:generarPDFToho }
+    methods: [GET]
+
+manifiestos_extendidos:
+    path: /manifiestos/extendidos
+    defaults: { _controller: PickingBundle:Manifiestos:manifiestoExtendido }
+    methods: [GET]

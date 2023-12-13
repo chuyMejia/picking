@@ -1,0 +1,33 @@
+picking_pantalla_new:
+    path: /picking/new
+    defaults: { _controller: PickingBundle:Picking:new }
+    methods: [GET]
+
+picking_registro:
+    path: /picking/registro
+    defaults: { _controller: PickingBundle:Picking:registro }
+    methods: [POST]
+    condition: "request.isXmlHttpRequest()"
+
+picking_valida_existencia:
+    path: /picking/valida_existencia
+    defaults: { _controller: PickingBundle:Picking:validaExistenciaPicking }
+    methods: [GET]
+    condition: "request.isXmlHttpRequest()"
+
+picking_pantalla_cierre:
+    path: /picking/cierre
+    defaults: { _controller: PickingBundle:Picking:viewCierrePicking }
+    methods: [GET]
+
+picking_valida_horacierre_registrada:
+    path: /picking/validar_cierre
+    defaults: { _controller: PickingBundle:Picking:validaHoraFinRegistrada }
+    methods: [GET]
+    condition: "request.isXmlHttpRequest()"
+
+picking_registra_hora_cierre:
+    path: /picking/registra_cierre
+    defaults: { _controller: PickingBundle:Picking:registraHoraCierre }
+    methods: [POST]
+    condition: "request.isXmlHttpRequest()"
